@@ -37,6 +37,7 @@ class ProductManager {
     }
 
     getProductById(id){
+        
        
         let porId = this.products.find((element) => element.id == id)
         

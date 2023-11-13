@@ -24,7 +24,7 @@ app.get('/products',(req,res)=>{
 app.get('/products/:pid',(req,res)=>{
 
     const{ pid} =req.params
-    let producto =productos.find((element)=>element.id == pid) 
+    let producto = manager.getProductById(pid)
     if(producto){
         res.json(producto)
     }

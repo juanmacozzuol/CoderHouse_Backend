@@ -1,23 +1,5 @@
 [
     {
-        "title": "producto prueba",
-        "description": "este producto es una prueba",
-        "price": 200,
-        "thumbnail": "sin imagen",
-        "code": "abc123",
-        "stock": 25,
-        "id": 1
-    },
-    {
-        "title": "producto prueba3",
-        "description": "este producto es una prueba3",
-        "price": 700,
-        "thumbnail": "sin imagen3",
-        "code": "abc124",
-        "stock": 10,
-        "id": 3
-    },
-    {
         "title": "producto prueba2",
         "description": "este producto es una prueba2",
         "price": 500,
@@ -25,5 +7,43 @@
         "code": "abc122",
         "stock": 45,
         "id": 4
+    },
+    {
+        "title": "aceite de oliva",
+        "description": "aderezo",
+        "code": "PL03",
+        "price": 2400,
+        "stock": 28,
+        "category": "cocina",
+        "thumbnails": [
+            "aceite_01",
+            "aceite.jpg"
+        ],
+        "status": true,
+        "id": 5
+    },
+    {
+        "title": "lavandina",
+        "description": "limpiador blanqueador",
+        "code": "PL07",
+        "price": 456,
+        "status": true,
+        "stock": 73,
+        "category": "limpieza",
+        "thumbnails": [
+            "lavandina.jpg",
+            "lavandina2.jpg"
+        ],
+        "id": 6
+    },
+    {
+        "title": "pimienta",
+        "description": "condimento",
+        "code": "JM08",
+        "price": 111,
+        "status": true,
+        "stock": 51,
+        "category": "cocina",
+        "id": 7
     }
 ]

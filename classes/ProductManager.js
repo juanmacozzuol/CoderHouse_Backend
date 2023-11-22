@@ -5,15 +5,24 @@ class ProductManager {
         this.products = []
         this.path = path
     }
+
     addProduct(producto){
-        let {title, description, price, thumbnail, code, stock} = producto
-        if(!title || !description || !price  || !thumbnail || !code  || !stock){
-           return console.log("producto incompleto, no se registrará")
+        let {title, description, code, price, status, stock, category, thumbnails} = producto
+    
+        if(!title || !description || !price || !code  || !stock || !category){
+            console.log("producto incompleto, no se registrará")
+            return "producto incompleto, no se registrará"
         } 
+        if(status == undefined){
+            producto.status = true
+        }
 
         const repetido = this.products.find((element) => element.code == producto.code)
+
         if(repetido != undefined){
-            return console.log("producto con codigo ya agregado")
+            console.log("producto con codigo ya agregado")
+            return "producto con codigo ya agregado"
+
 
         }
         else{
@@ -26,6 +35,7 @@ class ProductManager {
             
             this.products.push(producto)
             fs.writeFileSync(this.path,JSON.stringify(this.products))
+            return producto
 
         }
     }
@@ -54,7 +64,7 @@ class ProductManager {
         
        
         if(this.products.find((element)=>element.code == updateInfo.code) !=undefined){
-            return console.log("codigo ya existente en otro producto, no se actualizará la información")
+            return "codigo ya existente en otro producto, no se actualizará la información"
         }
         else{
             let elementoPorId = this.products.find((element) => element.id == id)
@@ -68,6 +78,7 @@ class ProductManager {
 
                 this.products[indicePorID] = {...elementoPorId,...updateInfo}
                 fs.writeFileSync(this.path,JSON.stringify(this.products))
+                return this.products[indicePorID]
 
             }
         }
@@ -75,21 +86,16 @@ class ProductManager {
     }
 
     deleteProduct(id){
-      
-        this.products.splice(id-1, 1)
-        fs.writeFileSync(this.path,JSON.stringify(this.products))
-
-    }
-}
-
-class Product{
-    constructor(title,description,price,thumbnail,code,stock){
-        this.title = title
-        this.description = description
-        this.price = price
-        this.thumbnail = thumbnail
-        this.code = code
-        this.stock = stock
+        let indicePorID = this.products.findIndex((element) => element.id == id)
+        if(indicePorID != -1){
+        
+            this.products.splice(indicePorID, 1)
+            fs.writeFileSync(this.path,JSON.stringify(this.products))
+            return "Producto Eliminado."
+        }
+        else{
+            return "Not Found"
+        }
     }
 }
 

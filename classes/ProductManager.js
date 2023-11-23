@@ -6,13 +6,14 @@ class ProductManager {
         this.path = path
     }
 
-    addProduct(producto){
+    async addProduct(producto){
         let {title, description, code, price, status, stock, category, thumbnails} = producto
     
         if(!title || !description || !price || !code  || !stock || !category){
             console.log("producto incompleto, no se registrará")
-            return "producto incompleto, no se registrará"
+            return {error:"producto incompleto, no se registrará"}
         } 
+        
         if(status == undefined){
             producto.status = true
         }
@@ -21,7 +22,8 @@ class ProductManager {
 
         if(repetido != undefined){
             console.log("producto con codigo ya agregado")
-            return "producto con codigo ya agregado"
+
+            return {error: "producto con codigo ya agregado"}
 
 
         }
@@ -34,7 +36,7 @@ class ProductManager {
             }
             
             this.products.push(producto)
-            fs.writeFileSync(this.path,JSON.stringify(this.products))
+           await fs.promises.writeFile(this.path,JSON.stringify(this.products))
             return producto
 
         }
@@ -60,7 +62,7 @@ class ProductManager {
         
     }
 
-    updateProduct(id,updateInfo){
+    async updateProduct(id,updateInfo){
         
        
         if(this.products.find((element)=>element.code == updateInfo.code) !=undefined){
@@ -71,13 +73,13 @@ class ProductManager {
             
 
             if(elementoPorId == undefined){
-                return "Not found"
+                return {error:"Not found"}
             }
             else{
                 let indicePorID = this.products.findIndex((element) => element.id == id)
 
                 this.products[indicePorID] = {...elementoPorId,...updateInfo}
-                fs.writeFileSync(this.path,JSON.stringify(this.products))
+                await fs.promises.writeFile(this.path,JSON.stringify(this.products))
                 return this.products[indicePorID]
 
             }
@@ -85,16 +87,16 @@ class ProductManager {
 
     }
 
-    deleteProduct(id){
+    async deleteProduct(id){
         let indicePorID = this.products.findIndex((element) => element.id == id)
         if(indicePorID != -1){
         
             this.products.splice(indicePorID, 1)
-            fs.writeFileSync(this.path,JSON.stringify(this.products))
-            return "Producto Eliminado."
+            await fs.promises.writeFile(this.path,JSON.stringify(this.products))
+            return {message:"Producto Eliminado."}
         }
         else{
-            return "Not Found"
+            return {error:"Not Found"}
         }
     }
 }

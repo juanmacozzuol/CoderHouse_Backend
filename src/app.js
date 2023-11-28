@@ -4,9 +4,17 @@ import cartRouter from '../routes/cart.router.js'
 import viewsRouter from '../routes/views.router.js'
 import handlebars from 'express-handlebars'
 import __dirname from '../utils.js'
+import {Server} from 'socket.io'
+import ProductManager from '../classes/ProductManager.js'
 
 const app = express()
 const port = 8080
+
+const httpServer =  app.listen(port,() => {
+    console.log("Server listening in port: " + port)
+})
+
+const socketServer = new Server(httpServer)
 
 app.engine('handlebars', handlebars.engine())
 app.set('views',__dirname+'/views')
@@ -18,9 +26,15 @@ app.use('/api/products',productRouter)
 app.use('/api/carts',cartRouter)
 app.use('/',viewsRouter)
 
+const manager = new ProductManager("productos.json")
+const productos = manager.getProducts()
 
-
-
-app.listen(port,() => {
-    console.log("Server listening in port: " + port)
+socketServer.on("connection", (socketClient) => {
+    console.log("Nuevo cliente conectado");
+    socketClient.emit('product_list', productos)
+    socketClient.on('product', (product)=>{
+        console.log(product)
+        productos.push(product)
+        socketClient.emit('product_list', productos)
+    })
 })

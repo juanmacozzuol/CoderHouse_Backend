@@ -1,29 +1,29 @@
 import {Router} from 'express'
-import ProductManager from '../classes/ProductManager.js'
+import ProductDao from '../daos/dbManager/product.dao.js'
 const router = Router()
-let manager = new ProductManager('productos.json')
-let productos = manager.getProducts()
 
-router.get('/',(req,res)=>{
+
+
+router.get('/',async (req,res)=>{
     try{
-        const { limit } = req.query
-        if(Number(limit)){
-            res.json(productos.slice(0,limit))
-
-        }
-        else{
+        const { limit,page,query,sort } = req.query
+        const productos = await ProductDao.getAllProducts(limit, page, query, sort);
+        
+   
+   
             res.json(productos)
-        }
+        
     }
     catch(err){
         res.status(500).json({error:err})
     }
 })
 
-router.get('/:pid',(req,res)=>{
+router.get('/:pid', async (req,res)=>{
     try{
+        
         const{ pid } = req.params
-        let producto = manager.getProductById(pid)
+        const producto = ProductDao.getProductById(pid)
         res.json(producto)
 
     }
@@ -38,12 +38,7 @@ router.get('/:pid',(req,res)=>{
 router.post('/', async (req,res)=>{
     try{
         let producto = req.body
-        const newProduct = await manager.addProduct(producto)
-        if(newProduct?.error) {
-
-            return res.status(404).json(newProduct.error)
-        
-        }
+        const newProduct = await ProductDao.createProduct(producto)
         res.status(201).json({message: "Producto agregado correctamente"})
     }
     catch(err){
@@ -55,10 +50,7 @@ router.post('/', async (req,res)=>{
 router.put('/:pid',async (req,res)=>{
     try{
         let productoModificado = req.body
-        let modified = await manager.updateProduct(Number(req.params.pid),productoModificado)
-        if(modified?.error){
-            return res.status(404).json(modified.error)
-        }
+        let modified = await ProductDao.updateProduct(req.params.pid,productoModificado)
         res.status(201).json(modified)
     }
     catch(err){
@@ -68,10 +60,7 @@ router.put('/:pid',async (req,res)=>{
 
 router.delete('/:pid', async (req,res)=>{
     try{
-        let deleted =await manager.deleteProduct(Number(req.params.pid))
-        if(deleted?.error){
-            return res.status(404).json(deleted.error)
-        }
+        let deleted =await ProductDao.deleteProduct(req.params.pid)
         res.status(201).json(deleted.message)
     }
     catch(err){ res.status(500).json({error:err})}

@@ -1,0 +1,22 @@
+<div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"> Producto </th>
+        <th scope="col"> Cantidad </th>
+
+
+      </tr>
+    </thead>
+    <tbody>
+      {{#each productos.products}}
+        <tr>
+          <td> {{this.product.title}}</td>
+          <td> {{this.quantity}}</td>
+  
+        </tr>
+      {{/each}}
+
+    </tbody>
+
+</div>

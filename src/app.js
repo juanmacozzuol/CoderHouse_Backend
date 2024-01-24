@@ -1,5 +1,5 @@
 import express from 'express'
-import __dirname from '../dirname.js'
+import __dirname from './utils/dirname.js'
 import handlebars from 'express-handlebars'
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
 import mongoose from 'mongoose'
@@ -11,7 +11,7 @@ import usersViewsRouter from './routes/users.views.router.js'
 import Handlebars from "handlebars";
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
-
+import path from 'path'
 const app = express()
 const port = 8080
 
@@ -20,9 +20,9 @@ app.engine('hbs', handlebars.engine({
     defaultLayout: "main",
     handlebars: allowInsecurePrototypeAccess(Handlebars),
   }))
-app.set('views',__dirname + '/src/views')
+app.set('views',path.join(__dirname , '../views'))
 app.set('view engine','hbs')
-app.use(express.static(__dirname+'/public'))
+app.use(express.static(path.join(__dirname,'../../public')))
 
 
 app.use(session({
@@ -41,12 +41,18 @@ app.use(session({
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+
+app.use('/api/sessions', sessionsRouter)
+app.use('/users',usersViewsRouter)
+app.use((req,res,next)=>{
+  if(!req.session.user){
+    return res.redirect('/users/login')
+  }
+  next()
+})
 app.use('/api/products',productRouter)
 app.use('/api/carts',cartRouter)
 app.use('/',viewsRouter)
-app.use('/users',usersViewsRouter)
-app.use('/api/sessions', sessionsRouter)
-
 
 
 app.listen(port,() => {

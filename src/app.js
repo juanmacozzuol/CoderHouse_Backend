@@ -12,6 +12,8 @@ import Handlebars from "handlebars";
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import path from 'path'
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 const app = express()
 const port = 8080
 
@@ -38,6 +40,10 @@ app.use(session({
   saveUninitialized:true
 
 }))
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))

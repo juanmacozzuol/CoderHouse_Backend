@@ -1,50 +1,23 @@
 import {Router} from 'express'
-import userModel from '../models/user.model.js'
-import { createHash, isValidPassword } from '../utils/bcrypt.js'
-import passport from 'passport'
+import { githubAuth, githubCallback, register, login, failLogin, logout } from '../controllers/sessions.controller.js'
+
 
 const router = Router()
 
-router.get('/github', passport.authenticate('github',{scope:['user:email']}),async(req,res)=>{})
+router.get('/github', githubAuth)
 
-router.get('/githubcallback',passport.authenticate('github',{failureRedirect:'/login'}),async (req,res)=>{
-    req.session.user = req.user
-    res.redirect('/')
-})
+router.get('/githubcallback', githubCallback)
 
-router.post('/register', passport.authenticate('register',{failureRedirect:'/failregister'}), async (req,res) =>{
-
-    res.send({status:'success',msg:"User registered"})
-})
+router.post('/register', register)
 
 router.get('/failregister', async (req,res)=>{
     console.log("Register failed")
     res.send({error:"Failed"})
 })
 
-router.post('/login', passport.authenticate('login',{failureRedirect:'/faillogin'}), async (req,res) => {
-    if(!req.user) return res.status(400).send({status:'error',msg:'Invalid credentials'})
-    let rol;
-    if(req.user.email == "adminCoder@coder.com"){
-        rol = 'admin'
-    }
-    else{
-        rol = "user"
-    }
+router.post('/login', login)
 
-    req.session.user = {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        age: req.user.age,
-        email: req.user.email,
-        rol: rol
-    }
-    res.send({status:'success', payload:req.session.user})
-})
-
-router.get('/faillogin', (req, res)=>{
-    res.send({error:'Failed login'})
-})
+router.get('/faillogin', failLogin)
 
 
 // router.post('/register', async (req,res)=>{
@@ -90,10 +63,5 @@ router.get('/faillogin', (req, res)=>{
 //     res.send({status:'success', payload: req.session.user, message:'Logueo exitoso'})
 // })
 
-router.get('/logout',  (req,res)=>{
-    req.session.destroy(err =>{
-        if(!err) return res.status(200).send("deslogueo exitoso")
-        else res.send("fallo el deslogueo")
-    })
-})
+router.get('/logout', logout)
 export default router;

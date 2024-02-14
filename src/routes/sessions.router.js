@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import { githubAuth, githubCallback, register, login, failLogin, logout } from '../controllers/sessions.controller.js'
+import { githubAuth, githubCallback, register, login, loginFail, logout } from '../controllers/sessions.controller.js'
 
 
 const router = Router()
@@ -17,7 +17,7 @@ router.get('/failregister', async (req,res)=>{
 
 router.post('/login', login)
 
-router.get('/faillogin', failLogin)
+router.get('/faillogin', loginFail)
 
 
 // router.post('/register', async (req,res)=>{

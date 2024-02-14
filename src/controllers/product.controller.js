@@ -1,4 +1,4 @@
-import ProductDao from "../daos/dbManager/product.dao";
+import ProductDao from "../services/product/product.dao.js";
 
 
 

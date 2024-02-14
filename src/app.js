@@ -13,9 +13,13 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import path from 'path'
 import passport from 'passport';
-import initializePassport from './config/passport.config.js';
+import initializePassport from './config/auth/passport.config.js';
+import config from './config/env.config.js'
 const app = express()
-const port = 8080
+const port = config.port
+const mongo_url = config.urlMongo
+
+console.log("PORT",port)
 
 app.engine('hbs', handlebars.engine({
     extname: ".hbs",
@@ -30,7 +34,7 @@ app.use(express.static(path.join(__dirname,'../../public')))
 app.use(session({
 
   store: MongoStore.create({
-    mongoUrl:"mongodb://127.0.0.1:27017/segunda_entrega", 
+    mongoUrl: mongo_url, 
     mongoOptions:{ useNewUrlParser:true, useUnifiedTopology:true},
     ttl:10 * 60
   }),
@@ -66,6 +70,6 @@ app.listen(port,() => {
 })
 
 mongoose
-    .connect('mongodb://127.0.0.1:27017/segunda_entrega')
+    .connect(mongo_url)
     .then( db => console.log(`-> sucessfuly connected to database.`) )
     .catch( err => console.error(`-> can't connect to database due to following error: ${err}.`) )

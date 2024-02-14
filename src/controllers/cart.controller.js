@@ -1,5 +1,5 @@
-import CartDao from "../daos/dbManager/cart.dao.js"
-import productDao from "../daos/dbManager/product.dao.js"
+import CartDao from "../services/cart/cart.dao.js"
+import productDao from "../services/product/product.dao.js"
 
 
 export const getAllCarts = async (req,res)=>{

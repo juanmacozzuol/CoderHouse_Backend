@@ -4,6 +4,7 @@
     <p>Mail:{{user.email}}</p>
     <p>Edad:{{user.age}}</p>
     <p>Rol:{{user.rol}}</p>
+
 </div>
 <button id="logout">Logout</button>
 <div>
@@ -26,7 +27,7 @@
           <td> {{this.code}}</td>
           <td> {{this.price}} </td>
           <td> {{this.category}}</td>
-          <td><button onclick="addItem({{@index}})">Agregar a carrito</button></td>
+          <td><button onclick=addItem({{@index}})>Agregar a carrito</button></td>
         </tr>
       {{/each}}
 
@@ -40,9 +41,12 @@
   <button> <a href="/?page={{productos.nextPage}}">Siguiente</a></button>
   {{/if}}
   </div>
-  
+  <button id="finish">Finalizar compra</button>
+</div>  
+  <script>    var cart ="{{user.cart}}"
+    
+  </script>
   <script src="main.js">
- 
-  
-    </script>
-</div>
+
+
+  </script>

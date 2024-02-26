@@ -1,11 +1,12 @@
-import ProductDao from "../services/product/product.dao.js";
-
-
+import { productService } from "../services/services.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 export const getAllProducts = async (req,res)=>{
     try{
         const { limit,page,query,sort } = req.query
-        const productos = await ProductDao.getAllProducts(limit, page, query, sort);
+        const productos = await productService.getAllProducts(limit, page, query, sort);
         
    
    
@@ -21,7 +22,7 @@ export const getProduct = async (req,res)=>{
     try{
         
         const{ pid } = req.params
-        const producto = ProductDao.getProductById(pid)
+        const producto = productService.getProductById(pid)
         res.json(producto)
 
     }
@@ -35,21 +36,40 @@ export const getProduct = async (req,res)=>{
 
 export const createProduct = async (req,res)=>{
     try{
+       
+            
         let producto = req.body
-        const newProduct = await ProductDao.createProduct(producto)
+
+        if(!producto.title||!producto.description||!producto.code||!producto.price||!producto.stock||!producto.category){
+            CustomError.createError({
+                name:"Product creation error",
+                cause: generateProductErrorInfo(producto),
+                message:"Error trying to create product",
+                code:EErrors.INVALID_TYPES_ERROR
+            })
+        }
+        const newProduct = await productService.createProduct(producto)
         res.status(201).json({message: "Producto agregado correctamente"})
+        
+     
     }
-    catch(err){
-        res.status(500).json({error:err})
+    catch(error){
+        console.error(error.cause);
+        res.status(500).send({ error: error.code, message: error.message });
     }
 
 }
 
 export const updateProduct = async (req,res)=>{
     try{
-        let productoModificado = req.body
-        let modified = await ProductDao.updateProduct(req.params.pid,productoModificado)
-        res.status(201).json(modified)
+        if(req.session.user.rol === 'admin'){
+            let productoModificado = req.body
+            let modified = await productService.updateProduct(req.params.pid,productoModificado)
+            res.status(201).json(modified)
+        }
+        else{
+            res.status(401).json({message:"Acceso denegado"})
+        }
     }
     catch(err){
         res.status(500).json({error:err})
@@ -58,9 +78,17 @@ export const updateProduct = async (req,res)=>{
 
 export const deleteProduct = async (req,res)=>{
     try{
-        let deleted =await ProductDao.deleteProduct(req.params.pid)
-        res.status(201).json(deleted.message)
+        if(req.session.user.rol === 'admin'){
+            let deleted =await productService.deleteProduct(req.params.pid)
+            res.status(201).json(deleted.message)
+        }
+        else{
+            res.status(401).json({message:"Acceso denegado"})
+        }
     }
     catch(err){ res.status(500).json({error:err})}
     
 }
+
+
+

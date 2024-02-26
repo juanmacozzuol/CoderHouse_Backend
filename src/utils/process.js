@@ -20,10 +20,10 @@ process.on("exit", code => {
     console.log("Codigo de salida del proceso: " + code);
 });
 
-process.on("uncaughtException", exception => {
-    console.log("Esta exception no fue capturada, o controlada.");
-    console.log(`Exception no capturada: ${exception}`)
-});
+// process.on("uncaughtException", exception => {
+//     console.log("Esta exception no fue capturada, o controlada.");
+//     console.log(`Exception no capturada: ${exception}`)
+// });
 
 process.on("message", message => {
     console.log("Este codigo se ejecutará cuando reciba un mensaje de otro proceso.");

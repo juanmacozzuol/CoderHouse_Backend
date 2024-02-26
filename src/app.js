@@ -1,4 +1,5 @@
 import express from 'express'
+import {Server} from 'socket.io'
 import __dirname from './utils/dirname.js'
 import handlebars from 'express-handlebars'
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
@@ -15,20 +16,23 @@ import path from 'path'
 import passport from 'passport';
 import initializePassport from './config/auth/passport.config.js';
 import config from './config/env.config.js'
+import errorHandler from './middlewares/errors/index.js'
 const app = express()
+
+let messages = []
 const port = config.port
 const mongo_url = config.urlMongo
-
-console.log("PORT",port)
+const session_secret = config.sessionSecret
 
 app.engine('hbs', handlebars.engine({
     extname: ".hbs",
     defaultLayout: "main",
     handlebars: allowInsecurePrototypeAccess(Handlebars),
   }))
+
 app.set('views',path.join(__dirname , '../views'))
 app.set('view engine','hbs')
-app.use(express.static(path.join(__dirname,'../../public')))
+app.use(express.static(path.join(__dirname,'../public')))
 
 
 app.use(session({
@@ -39,7 +43,7 @@ app.use(session({
     ttl:10 * 60
   }),
 
-  secret: "Th1s1sA5ecret",
+  secret: session_secret,
   resave:false,
   saveUninitialized:true
 
@@ -54,21 +58,29 @@ app.use(express.urlencoded({extended:true}))
 
 app.use('/api/sessions', sessionsRouter)
 app.use('/users',usersViewsRouter)
-app.use((req,res,next)=>{
-  if(!req.session.user){
-    return res.redirect('/users/login')
-  }
-  next()
-})
+// app.use((req,res,next)=>{
+//   if(!req.session.user){
+//     return res.redirect('/users/login')
+//   }
+//   next()
+// })
 app.use('/api/products',productRouter)
+
 app.use('/api/carts',cartRouter)
 app.use('/',viewsRouter)
+app.use(errorHandler)
+const httpServer = app.listen(port, ()=>{console.log("Listening on port " + port)})
 
+const io = new  Server(httpServer)
+io.on('connection',socket =>{
+  io.emit('messageLogs', messages)
+socket.on('message',data =>{
 
-app.listen(port,() => {
-    console.log("Server listening in port: " + port)
+  messages.push(data)
+  io.emit('messageLogs', messages)
 })
 
+})
 mongoose
     .connect(mongo_url)
     .then( db => console.log(`-> sucessfuly connected to database.`) )

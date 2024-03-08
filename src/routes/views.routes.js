@@ -14,7 +14,7 @@ router.get('/',async (req,res)=>{
 router.get('/carts/:cid',async (req,res)=>{
     const {cid} = req.params
     const productos = await cartService.getProductsFromCart(cid)
-    console.log(productos)
+    req.logger.info(productos)
     res.render("cart",{productos})
 })
 

@@ -73,7 +73,11 @@ export const login = async (req,res) => {
     const {email, password} = req.body
     const user = await userModel.findOne({email})  
       let rol;
-      if(!user) return res.status(401).send({status:"Error", error:"Incorrect credentials"})
+      if(!user){
+        req.logger.error("Credenciales incorrectas")
+        return res.status(401).send({status:"Error", error:"Incorrect credentials"})
+      } 
+
       if(email == "adminCoder@coder.com" && password == "adminCod3r123"){
           rol = 'admin'
       }
@@ -91,4 +95,15 @@ export const login = async (req,res) => {
         }
       const rol_user = await userModel.findOneAndUpdate({email},{rol:rol})
       res.send({status:'success', payload: req.session.user, message:'Logueo exitoso'})
+  }
+
+export  const loggerTest =(req,res)=>{
+
+    
+    req.logger.info(`${req.method} en ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`)
+    req.logger.warning(`${req.method} en ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`)
+    req.logger.http(`${req.method} en ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`)
+    req.logger.error(`${req.method} en ${req.url} - at ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`)
+    
+    res.send({message:"logged"})
   }

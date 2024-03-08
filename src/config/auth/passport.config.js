@@ -15,7 +15,7 @@ const initializePassport = () =>{
             try{
                 let user = await userModel.findOne({email:username})
                 if(user){
-                    console.log("User already exists")
+                    req.logger.error("User already exists")
                     return done(null,false);
                 }
                 const newUser = {
@@ -38,7 +38,7 @@ const initializePassport = () =>{
         try{
             const user = await userModel.findOne({email:username})
             if(!user){
-                console.log("User doesn't exists")
+                req.logger.error("User doesn't exists")
                 return done(null, false)
             }
             if(!isValidPassword(user,password)) return done (null, false)
@@ -56,7 +56,7 @@ const initializePassport = () =>{
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     }, async(accessToken, refreshToken, profile, done) =>{
         try{
-            console.log(profile)
+            
             let user = await userModel.findOne({email:profile._json.email})
             if(!user){
                 let newUser = {

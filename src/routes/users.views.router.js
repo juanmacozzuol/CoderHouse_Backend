@@ -14,5 +14,6 @@ router.get("/current", (req,res)=>{
     res.render('profile', {user:new UserDto(req.session.user)})
 })
 
-export default router
 
+
+export default router

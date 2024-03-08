@@ -104,7 +104,7 @@ export const deleteProductFromCart = async (req,res)=>{
         let cart = await cartService.getCartById(req.params.cid)
        
         let newProducts = cart.products.filter((e)=> e.product._id.toString() != req.params.pid)
-        console.log(newProducts)
+        req.logger.info(newProducts)
         cart.products= newProducts
         let updatedCart = cartService.updateProducts(req.params.cid,cart)
         res.status(201).json(updatedCart)
@@ -125,11 +125,11 @@ export const emptyCart = async (req,res)=>{
 }
 
 export const finishPurchase = async (req,res) =>{
-        console.log(req.params.cid)
+    
         let cart = await cartService.getCartById(req.params.cid)
         let total_price = 0;
         let unstocked_products = []
-        console.log(cart.products)
+        req.logger.info(cart.products)
         for( const item of cart.products){
             let product = await productService.getProductById(item.product)
             if(product.stock >= item.quantity){

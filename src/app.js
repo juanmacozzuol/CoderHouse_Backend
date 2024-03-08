@@ -17,6 +17,7 @@ import passport from 'passport';
 import initializePassport from './config/auth/passport.config.js';
 import config from './config/env.config.js'
 import errorHandler from './middlewares/errors/index.js'
+import { addLogger } from './config/logger.js';
 const app = express()
 
 let messages = []
@@ -34,7 +35,7 @@ app.set('views',path.join(__dirname , '../views'))
 app.set('view engine','hbs')
 app.use(express.static(path.join(__dirname,'../public')))
 
-
+app.use(addLogger)
 app.use(session({
 
   store: MongoStore.create({
